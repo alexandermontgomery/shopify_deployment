@@ -28,4 +28,10 @@ class ShopifyEnvironmentsController extends BaseController {
 		}
 		$this->configs->save($data_formatted);
 	}
+
+	public function show($env){
+		$info = $this->envs->get($this->shopify->shop, $env);
+		$repo = App::make('ShopifyRepo');
+		return $info;
+	}
 }

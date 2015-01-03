@@ -7,6 +7,14 @@ class ShopifyEnvironments{
 		return $res;
 	}
 
+	public function get($shop, $env){
+		$res = DB::select("SELECT * FROM shopify_environments WHERE shop = ? AND env = ?", array($shop, $env));
+		if(isset($res[0])){
+			return $res[0];
+		}
+		return;
+	}
+
 	public function save($configs){
 		if(empty($configs)){
 			return;

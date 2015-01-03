@@ -15,6 +15,6 @@ Route::get('/home', array('before' => 'auth', 'uses' =>'HomeController@showHome'
 Route::any('/shopify_authorize/start', 'HomeController@shopifyAuthorizeStart');
 Route::get('/shopify_authorize/end', 'HomeController@shopifyAuthorizeEnd');
 Route::group(array('before'=>'auth'), function(){
-	Route::resource('shopify_environments', 'ShopifyEnvironmentsController', array('only' => array('index', 'store')));
+	Route::resource('shopify_environments', 'ShopifyEnvironmentsController', array('only' => array('index', 'store', 'show')));
 	Route::resource('shopify_themes', 'ShopifyThemeController', array('only' => array('index')));	
 });
