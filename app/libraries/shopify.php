@@ -1,4 +1,5 @@
 <?php
+
 class ShopifyClient {
 	public $shop_domain;
 	private $token;
@@ -46,7 +47,7 @@ class ShopifyClient {
 		return $this->shopApiCallLimitParam(1);
 	}
 
-	public function callsLeft($response_headers)
+	public function callsLeft()
 	{
 		return $this->callLimit() - $this->callsMade();
 	}

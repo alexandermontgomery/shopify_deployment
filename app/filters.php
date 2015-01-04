@@ -13,14 +13,16 @@
 
 App::before(function($request)
 {
-	if(Input::get('shop')){
-		Session::put('shopify_store', Input::get('shop'));	
-	}
-	$shop = Session::get('shopify_store');
-	$shopify = new Shopify($shop, Config::get('app.shopify_key'), Config::get('app.shopify_secret'));
+	if(!App::runningInConsole()){
+		if(Input::get('shop')){
+			Session::put('shopify_store', Input::get('shop'));	
+		}
+		$shop = Session::get('shopify_store');
+		$shopify = Common::getShopify($shop);
 
-	// Register a Shopify object
-	App::instance('Shopify', $shopify);
+		// Register a Shopify object
+		App::instance('Shopify', $shopify);
+	}
 });
 
 

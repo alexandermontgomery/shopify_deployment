@@ -16,7 +16,6 @@ class ShopifyDeploymentConfigs extends Migration {
 			$table->string('shop');
 			$table->string('env');
 			$table->integer('theme_id');
-			$table->timestamp('last_updated')->nullable()->default(0);
 			$table->primary(array('shop', 'env'));
 		});
 	}

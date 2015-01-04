@@ -44,12 +44,35 @@ class Shopify{
 	}
 
 	public function getShopInfo(){
+		$this->ensureUnderLimit();
 		$this->shop_info = $this->client->call('GET', '/admin/shop.json');
 	}
 
 	public function listThemes(){
+		$this->ensureUnderLimit();
 		$this->themes = $this->client->call('GET', '/admin/themes.json');
 		return $this->themes;
+	}
+
+	private function ensureUnderLimit(){
+		try{
+			$calls_left = $this->client->callsLeft();
+			if($calls_left < 10){
+				sleep(1);
+			}
+		} catch(Exception $e){
+			return;
+		}
+	}
+
+	public function getAssets($theme_id){
+		$this->ensureUnderLimit();
+		return $this->client->call('GET', '/admin/themes/' . $theme_id . '/assets.json');
+	}
+
+	public function getAsset($theme_id, $asset_key){
+		$this->ensureUnderLimit();
+		return $this->client->call('GET', '/admin/themes/' . $theme_id . '/assets.json', array('asset[key]' => $asset_key));
 	}
 }
 

@@ -29,9 +29,16 @@ class ShopifyEnvironmentsController extends BaseController {
 		$this->configs->save($data_formatted);
 	}
 
-	public function show($env){
-		$info = $this->envs->get($this->shopify->shop, $env);
+	public function show($env_name){
+		$env = $this->envs->get($this->shopify->shop, $env_name);
 		$repo = App::make('ShopifyRepo');
-		return $info;
+		$branch = $repo->getBranch($env);
+		$summary = $branch->assetDownloadSummary();
+		$env->sync_summary = $summary;
+		return (array)$env;
+	}
+
+	public function downloadSync($env_name){
+		Queue::push('ShopifySyncController@downloadFromShopify', array('shop' => $this->shopify->shop, 'env' => $this->envs->get($this->shopify->shop, $env_name)));
 	}
 }
