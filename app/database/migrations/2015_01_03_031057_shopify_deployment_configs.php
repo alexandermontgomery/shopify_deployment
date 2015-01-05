@@ -16,6 +16,7 @@ class ShopifyDeploymentConfigs extends Migration {
 			$table->string('shop');
 			$table->string('env');
 			$table->integer('theme_id');
+			$table->string('build_number');
 			$table->primary(array('shop', 'env'));
 		});
 	}

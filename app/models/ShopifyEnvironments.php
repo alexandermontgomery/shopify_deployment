@@ -31,5 +31,9 @@ class ShopifyEnvironments{
 		$insert .= implode(',', $values) . " ON DUPLICATE KEY UPDATE theme_id=VALUES(theme_id)";
 		DB::insert($insert, $args);
 	}
+
+	public function updateBuild($shop, $env, $build){
+		DB::insert("UPDATE shopify_environments SET build_number=? WHERE shop = ? AND env = ?", array($build, $shop, $env));
+	}
 	
 }

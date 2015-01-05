@@ -1,9 +1,9 @@
 <div class="col-xs-12">
 	<label for="dev-theme">Development Theme</label>
-	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.configs.dev"></select>
+	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.environments.dev.theme_id"></select>
 	<label for="staging-theme">Staging Theme</label>
-	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.configs.stage"></select>
+	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.environments.stage.theme_id"></select>
 	<label for="staging-theme">Published Theme</label>
-	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.configs.deploy"></select>
+	<select id="staging-theme" class="form-control" ng-options="(value.id | num) as value.name for (key , value) in deploymentOptions" ng-model="shopifyDeployment.environments.deploy.theme_id"></select>
 	<button type="button" class="btn btn-primary" ng-click="saveThemeConfigurations()">Save</button>
 </div>

@@ -11,7 +11,7 @@ class ShopifyEnvironmentsController extends BaseController {
 		$envs = $this->envs->getAll($this->shopify->shop);
 		$envs_formatted = array();
 		foreach($envs as $env){
-			$envs_formatted[$env->env] = $env->theme_id;
+			$envs_formatted[$env->env] = $env;
 		}
 		return $envs_formatted;
 	}
@@ -26,19 +26,22 @@ class ShopifyEnvironmentsController extends BaseController {
 			$conf->theme_id = $theme_id;
 			$data_formatted[] = $conf;
 		}
-		$this->configs->save($data_formatted);
+		$this->envs->save($data_formatted);
 	}
 
 	public function show($env_name){
 		$env = $this->envs->get($this->shopify->shop, $env_name);
-		$repo = App::make('ShopifyRepo');
-		$branch = $repo->getBranch($env);
-		$summary = $branch->assetDownloadSummary();
-		$env->sync_summary = $summary;
 		return (array)$env;
 	}
 
-	public function downloadSync($env_name){
-		Queue::push('ShopifySyncController@downloadFromShopify', array('shop' => $this->shopify->shop, 'env' => $this->envs->get($this->shopify->shop, $env_name)));
+	public function downloadSyncSummary(){
+		$env = $this->envs->get($this->shopify->shop, 'dev');
+		$repo = App::make('ShopifyRepo');
+		$summary = $repo->assetDownloadSummary($env->theme_id);
+		return $summary;
+	}
+
+	public function downloadSync(){
+		Queue::push('ShopifySyncController@downloadFromShopify', array('shop' => $this->shopify->shop, 'env' => $this->envs->get($this->shopify->shop, 'dev')));
 	}
 }

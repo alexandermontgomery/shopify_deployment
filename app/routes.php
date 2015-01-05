@@ -16,8 +16,9 @@ Route::any('/shopify_authorize/start', 'HomeController@shopifyAuthorizeStart');
 Route::get('/shopify_authorize/end', 'HomeController@shopifyAuthorizeEnd');
 
 Route::get('/home', array('uses' =>'HomeController@showHome'));
-Route::get('/env_download_sync/{env_name}', array('uses' => 'ShopifyEnvironmentsController@downloadSync'));
 Route::group(array('before'=>'auth'), function(){
+	Route::get('/download_sync', array('uses' => 'ShopifyEnvironmentsController@downloadSync'));
+	Route::get('/download_sync_summary', array('uses' => 'ShopifyEnvironmentsController@downloadSyncSummary'));
 	Route::resource('shopify_environments', 'ShopifyEnvironmentsController', array('only' => array('index', 'store', 'show')));
 	Route::resource('shopify_themes', 'ShopifyThemeController', array('only' => array('index')));	
 });

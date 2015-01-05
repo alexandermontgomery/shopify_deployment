@@ -23,8 +23,8 @@
 			</div>
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
-					<li><a href="#deployments">Environments</a></li>
-					<li><a href="#configs">Configure</a></li>
+					<li><a href="#deployments">Deployments</a></li>
+					<li><a href="#environments">Environments</a></li>
 				</ul>
 			</div>
 		</div>

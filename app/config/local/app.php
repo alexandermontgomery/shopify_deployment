@@ -17,6 +17,6 @@ return array(
 	'shopify_key' => '3c6a93f877d69adf70f72947654574fd',
 	'shopify_secret' => '21fb3e5c3534ffc761843e95f971a8bb',
 	'repo_path' => '/repos',
-	'working_tree_path' => '/working_trees'
+	'build_prefix' => 'build-'
 
 );

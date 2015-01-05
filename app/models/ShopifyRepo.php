@@ -5,11 +5,10 @@ use Gitonomy\Git\Repository;
 class ShopifyRepo{
 
 	private $dir;
-	private $repo;
 
-	public function __construct(Shopify $shopify, ShopifyEnvironments $environments){
+	public function __construct(Shopify $shopify){
 		$this->shopify = $shopify;
-		$this->envs = $environments;
+		$this->branches = array();
 		$this->ensureRepo();
 	}
 
@@ -26,9 +25,9 @@ class ShopifyRepo{
 			$this->repo->run('status');
 		}catch(Exception $e){
 			Log::info("Initializing repo for shop " . $this->shopify->shop);
-			$this->repo = Gitonomy\Git\Admin::init($this->dir, false);
-			file_put_contents($this->dir . '/README.md', 'hello');
+			$this->repo = Gitonomy\Git\Admin::init($this->dir, FALSE);
 			$this->repo->run('config', array('user.name', $this->shopify->shop));
+			file_put_contents($this->dir . '/README.md', 'hello');
 			$this->repo->run('add', array('README.md'));
 			$this->repo->run('commit', array('-m "Initial Commit"'));
 		}
@@ -39,48 +38,21 @@ class ShopifyRepo{
 	}
 
 	public function addAndCommitAll($message){
-		// $wc = $this->repo->getWorkingCopy();
-		// $diff = $wc->getDiffStaged();
-		// $files = $diff->getFiles();
-		// if(count($files) > 0){
-		// 	$this->repo->run('add', array('-A .'));
-		// 	$this->repo->run('commit', array('-m "' . $message . '"'));
-		// }
 		try{
 			$this->repo->run('add', array('-A', '.'));
 			$this->repo->run('commit', array('-m "' . $message . '"'));			
 		}catch(Exception $e){
 			Log::info("Nothing to commit for shop " . $this->shopify->shop);
 		}
-
 	}
 
-}
-
-class ShopifyRepoBranch{
-
-	public function __construct(Shopify $shopify, Repository $repo, $env){
-		$this->shopify = $shopify;
-		$this->repo = $repo;
-		$this->env = $env;
-		$this->branch_name = $env->env . '_' . $env->theme_id;
-		$this->wc = $this->repo->getWorkingCopy();
-		$this->ensureBranch();
+	public function refreshRepo(){
+		$this->repo = new Repository($this->repo->getGitDir(), array('working_dir' => $this->repo->getWorkingDir()));	
 	}
 
-	private function ensureBranch(){
-		$ref = $this->repo->getReferences();
-		if(!$ref->hasBranch($this->branch_name)){
-			$this->wc->checkout('master', $this->branch_name);
-		}
-		else{
-			$this->wc->checkout($this->branch_name);
-		}
-	}
-
-	public function getShopifyAssetsFormatted(){
+	public function getShopifyAssetsFormatted($theme_id){
 		$assets = array();
-		$shopify_assets = $this->shopify->getAssets($this->env->theme_id);
+		$shopify_assets = $this->shopify->getAssets($theme_id);
 		foreach($shopify_assets as $asset){
 			$assets[$asset['key']] = array(
 				'path' => $asset['key'],
@@ -123,10 +95,10 @@ class ShopifyRepoBranch{
 		return $assets;
 	}
 
-	public function assetDownloadSummary(){
+	public function assetDownloadSummary($theme_id){
 		
 		// In the case of a download - the source assets are the files in Shopify
-		$source_assets = $this->getShopifyAssetsFormatted();
+		$source_assets = $this->getShopifyAssetsFormatted($theme_id);
 
 		// In the case of a download - the destination assets are the files in the local repo
 		$destination_assets = $this->getLocalRepoAssetsFormatted();
@@ -144,14 +116,14 @@ class ShopifyRepoBranch{
 		}
 	}
 
-	public function downloadAsset($asset){
+	public function downloadAsset($theme_id, $asset){
 		$save_location = $this->getAbsolutePath($asset);
 		$this->ensureDirectoryExists($save_location);
 		if(isset($asset['public_url'])){
 			file_put_contents($save_location, fopen($asset['public_url'], 'r'));		
 		}
 		else{
-			$asset_data = $this->shopify->getAsset($this->env->theme_id, $asset['path']);
+			$asset_data = $this->shopify->getAsset($theme_id, $asset['path']);
 			if(isset($asset_data['value'])){
 				file_put_contents($save_location, $asset_data['value']);
 			}

@@ -18,13 +18,33 @@ shopifyDeploymentApp.service('ShopifyDeployment', ["$http", "$rootScope", functi
 		});
 	}
 
-	ShopifyDeployment.getEnvironments = function(){
-		$http.get('/shopify_environments').success(function(response){
-			if(!response.hasOwnProperty('dev')){
-				response = {};
-			}
-			ShopifyDeployment.configs = response;
-		});	
+	ShopifyDeployment.getEnvironments = function(callback){
+		if(typeof ShopifyDeployment.environments == 'undefined'){
+			$http.get('/shopify_environments').success(function(response){
+				if(!response.hasOwnProperty('dev')){
+					response = {};
+				}
+				ShopifyDeployment.environments = response;
+				if(typeof callback != 'undefined'){
+					callback(ShopifyDeployment.environments);
+				}				
+			});	
+		}
+		if(typeof callback != 'undefined'){
+			callback(ShopifyDeployment.environments);
+		}				
+	}
+
+	ShopifyDeployment.getSyncSummary = function(callback){
+		$http.get('/download_sync_summary').success(function(response){
+			callback(response);
+		});
+	}
+
+	ShopifyDeployment.createBuild = function(){
+		$http.get('/download_sync').success(function(resp){
+
+		});
 	}
 
 	return ShopifyDeployment;
